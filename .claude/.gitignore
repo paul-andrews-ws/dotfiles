@@ -1,0 +1,24 @@
+# Machine-specific files (don't sync)
+settings.local.json
+*.local.json
+*.local.md
+
+# Sensitive files
+.credentials.json
+
+# Cache and ephemeral data
+cache/
+debug/
+downloads/
+file-history/
+history.jsonl
+paste-cache/
+plans/
+projects/
+session-env/
+shell-snapshots/
+stats-cache.json
+statsig/
+tasks/
+telemetry/
+todos/

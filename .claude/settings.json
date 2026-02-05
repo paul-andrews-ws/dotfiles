@@ -1,0 +1,13 @@
+{
+  "model": "opus",
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "graphite@ws-claude-marketplace": true,
+    "test-suite-optimizer@ws-claude-marketplace": true,
+    "claude-md-generator@ws-claude-marketplace": true
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "input=$(cat); current_dir=$(echo \"$input\" | jq -r '.workspace.current_dir'); dir_name=$(basename \"$current_dir\"); git_branch=\"\"; if [ -d \"$current_dir/.git\" ]; then git_branch=$(cd \"$current_dir\" && git --no-optional-locks branch --show-current 2>/dev/null); [ -n \"$git_branch\" ] && git_branch=\" ($git_branch)\"; fi; remaining=$(echo \"$input\" | jq -r '.context_window.remaining_percentage // empty'); context_info=\"\"; if [ -n \"$remaining\" ]; then remaining_int=$(printf \"%.0f\" \"$remaining\"); context_info=\" [ctx: ${remaining_int}%]\"; fi; version=$(echo \"$input\" | jq -r '.version'); model=$(echo \"$input\" | jq -r '.model.display_name'); echo \"${dir_name}${git_branch}${context_info} | v${version} | ${model}\""
+  }
+}
