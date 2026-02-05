@@ -1,0 +1,49 @@
+# CLAUDE.md
+
+## Tools & Environment
+
+- Use `/react-code-principles` skill when writing or modifying React/React Native components
+- Use `/typescript-best-practices` skill when writing or modifying TypeScript files
+- Use `/superpowers:brainstorming` skill before any creative work - creating features, building components, adding functionality, or modifying behavior
+- Use `/superpowers:executing-plans` skill when executing a written implementation plan
+- Use `/superpowers:dispatching-parallel-agents` or `/superpowers:subagent-driven-development` skills when implementing work with independent or parallelizable tasks
+- Use `/superpowers:requesting-code-review` skill after implementing work to iterate and improve code quality
+- Use `/observability-planning` and `/observability-implementation` skills when a prompt asks to consider development planning or monitoring
+- During planning and pre-code phases, use `/superpowers:writing-plans` for high-level architecture review and implementation strategy
+
+## Style
+
+- When working in Fort-Knox or any Ruby/backend files, use **Learning** output style - explain concepts, provide context for decisions, and help build understanding of the codebase and patterns
+
+## Code Changes
+
+- Examine patterns in neighbouring files first
+- Follow linting configs (`.eslintrc`, `.rubocop.yml`, `.editorconfig`)
+- Priority: (1) File consistency, (2) Readability, (3) Performance, (4) Conciseness
+- Stop and confirm before: architectural changes, multiple valid approaches, shared code/API changes, rewrites
+- Preserve existing comments unless provably false
+- Go light on comments in new code - code should be self-explanatory
+- Always use explicit braces `{}` for if statements, even single-line returns:
+  ```typescript
+  // Good
+  if (!value) {
+    return null;
+  }
+
+  // Bad - no inline conditionals
+  if (!value) return null;
+  ```
+
+## Testing
+
+- Never mock functionality being tested
+- Never write tests that only test mocked behaviour
+- Avoid mocking external libraries and dependencies - prefer integration tests that use real implementations
+- Don't duplicate test cases for the same behaviour - one representative test is sufficient
+- Test output must be clean (no ignored warnings/errors)
+
+## Git
+
+## Forbidden
+
+- Direct commits to main/master

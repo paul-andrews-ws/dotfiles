@@ -41,6 +41,20 @@ fi
 ln -s "$CLAUDE_DOTFILES/skills" "$CLAUDE_DIR/skills"
 echo "✓ Linked skills/"
 
+# Symlink CLAUDE.md
+if [ -f "$CLAUDE_DIR/CLAUDE.md" ] && [ ! -L "$CLAUDE_DIR/CLAUDE.md" ]; then
+    echo "Backing up existing CLAUDE.md to CLAUDE.md.backup"
+    mv "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.backup"
+fi
+
+if [ -L "$CLAUDE_DIR/CLAUDE.md" ]; then
+    echo "Removing existing symlink for CLAUDE.md"
+    rm "$CLAUDE_DIR/CLAUDE.md"
+fi
+
+ln -s "$CLAUDE_DOTFILES/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+echo "✓ Linked CLAUDE.md"
+
 echo ""
 echo "Setup complete!"
 echo ""

@@ -5,6 +5,7 @@ Personal Claude Code configuration synced via dotfiles.
 ## Contents
 
 - `settings.json` - User-level settings (model, plugins, status line)
+- `CLAUDE.md` - User-level instructions loaded into every session
 - `skills/` - Personal skills available across all projects
 
 ## Skills Included
