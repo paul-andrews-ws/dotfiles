@@ -5,6 +5,28 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 CLAUDE_DOTFILES="$DOTFILES_DIR/.claude"
 
+# ===================
+# Zsh Configuration
+# ===================
+echo "Setting up Zsh dotfiles..."
+
+if [ -f "$HOME/.zshrc" ] && [ ! -L "$HOME/.zshrc" ]; then
+    echo "Backing up existing .zshrc to .zshrc.backup"
+    mv "$HOME/.zshrc" "$HOME/.zshrc.backup"
+fi
+
+if [ -L "$HOME/.zshrc" ]; then
+    echo "Removing existing symlink for .zshrc"
+    rm "$HOME/.zshrc"
+fi
+
+ln -s "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
+echo "✓ Linked .zshrc"
+echo ""
+
+# ===================
+# Claude Code Configuration
+# ===================
 echo "Setting up Claude Code dotfiles..."
 echo "  Source: $CLAUDE_DOTFILES"
 echo "  Target: $CLAUDE_DIR"
