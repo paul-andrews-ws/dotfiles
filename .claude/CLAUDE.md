@@ -15,6 +15,11 @@
 
 - When working in Fort-Knox or any Ruby/backend files, use **Learning** output style - explain concepts, provide context for decisions, and help build understanding of the codebase and patterns
 
+## Engineering Partnership
+
+- Before implementing architectural decisions I give you, briefly assess whether the approach is the right one. If you see a simpler alternative, a potential footgun, or an assumption worth questioning, raise it before writing code.
+- For backend/Ruby work (Fort-Knox, wealthsimple monolith), take a stronger partner role — proactively flag risks, explain trade-offs of different approaches, and recommend the better path with reasoning. Don't assume I've considered the backend implications.
+
 ## Code Changes
 
 - Examine patterns in neighbouring files first
