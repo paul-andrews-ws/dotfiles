@@ -49,6 +49,13 @@
 
 ## Git
 
+- Before committing and pushing, always run lint and tests for the affected projects:
+  ```bash
+  pnpm nx run <project>:lint
+  pnpm nx run <project>:test
+  ```
+  Use `pnpm nx affected --target=lint,check-types` and `pnpm flightcheck --local-changes` when multiple projects are touched. Fix all failures before pushing — do not rely on remote CI to catch issues.
+
 ## Forbidden
 
 - Direct commits to main/master
