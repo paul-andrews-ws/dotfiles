@@ -77,6 +77,25 @@ fi
 ln -s "$CLAUDE_DOTFILES/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
 echo "✓ Linked CLAUDE.md"
 
+# Symlink MEMORY.md
+# The memory path is derived from the home directory (e.g. -Users-paul-andrews)
+MEMORY_PROJECT_KEY=$(echo "$HOME" | sed 's|/|-|g')
+MEMORY_DIR="$CLAUDE_DIR/projects/$MEMORY_PROJECT_KEY/memory"
+mkdir -p "$MEMORY_DIR"
+
+if [ -f "$MEMORY_DIR/MEMORY.md" ] && [ ! -L "$MEMORY_DIR/MEMORY.md" ]; then
+    echo "Backing up existing MEMORY.md to MEMORY.md.backup"
+    mv "$MEMORY_DIR/MEMORY.md" "$MEMORY_DIR/MEMORY.md.backup"
+fi
+
+if [ -L "$MEMORY_DIR/MEMORY.md" ]; then
+    echo "Removing existing symlink for MEMORY.md"
+    rm "$MEMORY_DIR/MEMORY.md"
+fi
+
+ln -s "$CLAUDE_DOTFILES/memory/MEMORY.md" "$MEMORY_DIR/MEMORY.md"
+echo "✓ Linked MEMORY.md"
+
 echo ""
 echo "Setup complete!"
 echo ""
