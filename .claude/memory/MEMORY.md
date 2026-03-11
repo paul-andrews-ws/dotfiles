@@ -81,9 +81,6 @@ To classify accounts (e.g. personal vs. business) without an eager query, follow
 ### Heuristic: check the invest tab first for home screen patterns
 When solving data-fetching or rendering architecture questions on the home screen, read `libs/mobile/screens/home/src/views/invest/components/tabs/account-group/invest-account-grouping.component.tsx` first — it consistently has the canonical pattern already implemented (Suspense boundaries, `AccountListDataContainer`, personal/business classification).
 
-### BB-649 branch: business-personal-accounts-grouping
-Active branch: `BB-649-Add-business-personal-accounts-grouping`. PR #63031 on wealthsimple/front-end-monorepo. Feature flag: `bb-mobile-personal-and-business-sections`.
-
 ## front-end-monorepo: Cash Mobile Micro-UI Patterns
 
 ### useLocale mock in cash tests
