@@ -1,5 +1,9 @@
 # Memory
 
+## Coding Style Feedback
+
+- [React hooks style](feedback_react_hooks_style.md) — no superfluous try/catch, no premature useCallback memoization
+
 ## Projects
 
 - **front-end-monorepo**: `/Users/paul.andrews/Repos/front-end-monorepo`
@@ -16,6 +20,13 @@ git commit ...
 git push ...
 ```
 (Update the node version in the path if needed.)
+
+### Worktree naming convention
+Worktrees for front-end-monorepo live as **sibling directories** to the main repo, named `front-end-monorepo-BB-{ticket-number}`. Example: `/Users/paul.andrews/Repos/front-end-monorepo-BB-693`. Do NOT use `.worktrees/` inside the repo.
+
+**Always run `git worktree list` first** before applying the using-git-worktrees skill's directory-detection logic — existing worktrees reveal the naming convention in use.
+
+After `git worktree add`, run `mise trust <worktree>/mise.toml` before attempting any `pnpm` or `node` commands — otherwise mise refuses to activate and shell builtins like `grep`/`tail` become unreachable.
 
 ### Branch naming convention
 `BB-{ticket-number}/short-description` — e.g. `BB-649/personal-business-account-owner-toggle-poc`
@@ -80,6 +91,21 @@ To classify accounts (e.g. personal vs. business) without an eager query, follow
 
 ### Heuristic: check the invest tab first for home screen patterns
 When solving data-fetching or rendering architecture questions on the home screen, read `libs/mobile/screens/home/src/views/invest/components/tabs/account-group/invest-account-grouping.component.tsx` first — it consistently has the canonical pattern already implemented (Suspense boundaries, `AccountListDataContainer`, personal/business classification).
+
+## front-end-monorepo: Mobile Navigation — Modal vs Stack Screen
+
+### Two-tier navigation: modal screens vs feature navigators
+Root-level modal screens (slide-up drawer) must live in `modalScreens` in `apps/mobile/retail/src/micro-uis/<package>.ts`, NOT as a `Stack.Screen` inside a feature navigator. Feature navigators use JS stacks (push transition, fullscreen).
+
+- `modalScreens` → processed by `NavigationBuilder.processModals` in `libs/mobile/packages/navigation/src/navigation.builder.tsx` → applies `{ animation: 'slide_from_bottom', presentation: 'modal', headerShown: false, freezeOnBlur: true }`
+- Feature `Stack.Screen` → push transition, fullscreen
+
+**When moving a screen to `modalScreens`:**
+1. Remove it from the feature navigator's `<Stack.Screen>` registration
+2. Remove its barrel export from `screens/index.ts` (becomes dead code — `pnpm unimported --quiet` will catch this)
+3. Add/keep its export in the package's `src/index.ts` (required for the cross-package lazy import)
+4. Change navigation prop type to `StackScreenProps<ReactNavigation.RootParamList, 'ScreenName'>`
+5. Add the lazy import entry to `modalScreens` in the micro-ui config file
 
 ## front-end-monorepo: Cash Mobile Micro-UI Patterns
 
