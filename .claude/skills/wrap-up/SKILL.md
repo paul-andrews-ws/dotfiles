@@ -61,6 +61,23 @@ decide where it belongs using the guide below, then write it there.
 - Is it personal or ephemeral context (local env, current sprint focus)? → `CLAUDE.local.md`
 - Is it already documented somewhere else? → Add an `@import` reference instead
 
+### Generalizability filter
+
+Before writing anything to memory, apply this test: **"Would this help in a
+session working on a completely different feature?"**
+
+- **Yes** → Save it. Examples: environment quirks, testing patterns that apply
+  across packages, tooling gotchas, user preferences about workflow.
+- **No** → Don't save it. Examples: architecture details of the feature just
+  built, backend behavior specific to one ticket, one-off debugging findings.
+  These belong in external docs (Notion, PR descriptions, code comments) — not
+  in Claude's memory.
+
+Ticket-scoped knowledge (how a specific feature works, backend race conditions
+discovered during one investigation, requirement resolution details) should be
+captured in team-facing docs like Notion or PR descriptions, not in memory
+files. Memory is for **cross-session, cross-feature patterns**.
+
 Apply updates now. If nothing noteworthy was learned, say so and move on.
 
 ---
