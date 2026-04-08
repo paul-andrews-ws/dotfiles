@@ -1,14 +1,50 @@
 # Memory
 
+## Active Projects
+
+- [Bulk CRA Bill Scheduling](project_bulk_cra_bill_scheduling.md) — BB-729, web frequency field for CRA payroll payees using paymentScheduleConfig union type
+
+## Workflow Feedback
+
+- Always wait for explicit user approval before committing and pushing. User QA tests changes on their local web build first.
+
 ## Coding Style Feedback
 
-- [React hooks style](feedback_react_hooks_style.md) — no superfluous try/catch, no premature useCallback memoization
+- [React hooks style](feedback_react_hooks_style.md) — no superfluous try/catch, no premature useCallback/useMemo memoization
+- [Sweep tests on locale changes](feedback_locale_string_test_sweep.md) — grep old string values across ALL test files before committing copy updates
+- [Avoid skipToken](feedback_avoid_skiptoken.md) — split into data-gate parent + unconditional hook child per Vlad's guide
+- [Avoid duplicate typename checks](feedback_avoid_duplicate_typename_checks.md) — extract GQL union narrowing once, don't repeat __typename checks
+- [Throw guards over silent fallbacks](feedback_throw_guards_over_silent_fallbacks.md) — throw on unexpected GQL union results, don't silently fall back to defaults
+- [Tophat vault-service CSP](feedback_tophat_vault_service_csp.md) — tophat builds can't load vault-service frames; *.builds.wealthsimple.com not in frame-ancestors allowlist
+- [Agnostic components](feedback_agnostic_components.md) — shared UI inputs must not depend on form context; accept value/onChange props, caller wraps in Controller
+
+## front-end-monorepo: schedule-inputs
+
+- [Schedule vs frequency naming](feedback_schedule_vs_frequency_naming.md) — "frequency" = interval (FrequencyOption, FrequencyInput); "schedule" = overall plan (ScheduleFrequency, getMaxEndDate)
+
+## front-end-monorepo: money-movement-core
+
+### FrequencyOption cascade when adding new values
+Adding a new member to `FrequencyOptionValues` cascades `TS2741` ("Property X is missing") into **every** package with a `Record<FrequencyOption, ...>` exhaustive map. Local `pnpm nx run <package>:check-types` only covers that package's tsconfig scope — CI's `check-types` job runs a broader matrix and will catch failures in unrelated packages (recurring-investments, payments-ui, mm-transfers, etc.). Before adding a new value, search for `Record<FrequencyOption` monorepo-wide to understand the blast radius, and prefer deferring until the backend actually activates the new type.
+
+## front-end-monorepo: Money Movement Patterns
+
+- [Idempotency key patterns](reference_idempotency_key_patterns.md) — UUID v4 in mutation input vars, multi-entry suffix pattern (`{baseUUID}-{date/currency}`), backend lookup via `search_funding_intents(idempotency_keys:)`
+
+## front-end-monorepo: GQL SDK
+
+- [New package gotchas](feedback_gql_sdk_new_package_gotchas.md) — CODEOWNERS prefix bug, unimported allowlist, union mock __typename, Nx daemon cache reset
+- [gql-generated scope creep](feedback_gql_generated_scope_creep.md) — regenerating gql-generated picks up unrelated schema changes; revert unless new base types are needed
 
 ## Projects
 
 - **front-end-monorepo**: `/Users/paul.andrews/Repos/front-end-monorepo`
 - **fort-knox**: `/Users/paul.andrews/Repos/fort-knox`
 - **wealthsimple**: `/Users/paul.andrews/Repos/wealthsimple`
+
+## fort-knox: Environment
+
+- [Ruby env for Claude Bash tool](reference_fort_knox_ruby_env.md) — mise shims, bundle install, graphql-snapshot hook requirements
 
 ## front-end-monorepo: Git & Environment
 
