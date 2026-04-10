@@ -1,12 +1,12 @@
 # Memory
 
-## Active Projects
-
-- [Bulk CRA Bill Scheduling](project_bulk_cra_bill_scheduling.md) — BB-729, web frequency field for CRA payroll payees using paymentScheduleConfig union type
-
 ## Workflow Feedback
 
 - Always wait for explicit user approval before committing and pushing. User QA tests changes on their local web build first.
+
+## Architecture & UI Feedback
+
+- [Onboarding checklist patterns](feedback_onboarding_checklist_patterns.md) — V0/V1 wrapper ownership, config-driven extensibility, flag-gated items
 
 ## Coding Style Feedback
 
@@ -17,19 +17,7 @@
 - [Throw guards over silent fallbacks](feedback_throw_guards_over_silent_fallbacks.md) — throw on unexpected GQL union results, don't silently fall back to defaults
 - [Tophat vault-service CSP](feedback_tophat_vault_service_csp.md) — tophat builds can't load vault-service frames; *.builds.wealthsimple.com not in frame-ancestors allowlist
 - [Agnostic components](feedback_agnostic_components.md) — shared UI inputs must not depend on form context; accept value/onChange props, caller wraps in Controller
-
-## front-end-monorepo: schedule-inputs
-
 - [Schedule vs frequency naming](feedback_schedule_vs_frequency_naming.md) — "frequency" = interval (FrequencyOption, FrequencyInput); "schedule" = overall plan (ScheduleFrequency, getMaxEndDate)
-
-## front-end-monorepo: money-movement-core
-
-### FrequencyOption cascade when adding new values
-Adding a new member to `FrequencyOptionValues` cascades `TS2741` ("Property X is missing") into **every** package with a `Record<FrequencyOption, ...>` exhaustive map. Local `pnpm nx run <package>:check-types` only covers that package's tsconfig scope — CI's `check-types` job runs a broader matrix and will catch failures in unrelated packages (recurring-investments, payments-ui, mm-transfers, etc.). Before adding a new value, search for `Record<FrequencyOption` monorepo-wide to understand the blast radius, and prefer deferring until the backend actually activates the new type.
-
-## front-end-monorepo: Money Movement Patterns
-
-- [Idempotency key patterns](reference_idempotency_key_patterns.md) — UUID v4 in mutation input vars, multi-entry suffix pattern (`{baseUUID}-{date/currency}`), backend lookup via `search_funding_intents(idempotency_keys:)`
 
 ## front-end-monorepo: GQL SDK
 
@@ -44,7 +32,11 @@ Adding a new member to `FrequencyOptionValues` cascades `TS2741` ("Property X is
 
 ## fort-knox: Environment
 
-- [Ruby env for Claude Bash tool](reference_fort_knox_ruby_env.md) — mise shims, bundle install, graphql-snapshot hook requirements
+- [Ruby env for Claude Bash tool](reference_fort_knox_ruby_env.md) — mise shims, bundle install, graphql-snapshot hook requirements, DB setup
+
+## Tools & Integrations
+
+- [JIRA ticket creation via MCP Locker](reference_jira_ticket_creation.md) — mcplocker auth, BB project template with info panels, custom field IDs
 
 ## front-end-monorepo: Git & Environment
 
@@ -98,36 +90,6 @@ If a `ConfigError: expected package.json path does not exist` surfaces for other
 pnpm nx run mobile-retail:start --reset-cache
 ```
 
-## DSChip icon color override (React Native design system)
-DSChip uses `React.cloneElement(iconLeft, { color, size: 'small' })` which **silently overwrites** any `color` prop you pass to the icon. The chip's own state-computed color wins:
-- `state="active"` → `soft-fg`
-- `state="selected"` → `strong-fg-inverted`
-- `state="inactive"` → `inactive-fg`
-
-**Fix:** Don't use `iconLeft`/`iconRight` props if you need custom icon color. Instead, put the icon inside the chip's `children` (e.g. in a `DSBox stacked="row"`) — chip children are rendered as-is without color interference.
-
-## front-end-monorepo: Home Screen Data Fetching Patterns
-
-### useAllAccounts is fragment-based, not a query
-`useAllAccounts` in `@wealthsimple/gql-sdk` reads from the Apollo `AllAccounts` fragment cache via `useFragment`/`useSuspenseFragment`. It does NOT fire a network request unless the fragment is incomplete. The `filter` option (e.g. `{ closed: false, archived: false }`) is applied **client-side** in JS, not as a GQL variable. All calls with the same `identityId` share the same fragment.
-
-### Invest tab pattern for classification inside Suspense
-To classify accounts (e.g. personal vs. business) without an eager query, follow the invest tab pattern (`invest-account-grouping.component.tsx`):
-1. Use `AccountListDataContainer` with `dataTransformFlatlist` (exported from `@wealthsimple/account-grouping-mobile`)
-2. Do classification inside the `children` render prop — this runs inside the Suspense boundary
-3. `useAllAccounts.useSuspended` resolves synchronously when the `AllAccounts` fragment is already cached (which it is by the time home screen widgets render, since `useAllAccountIdsHome` runs at the top level)
-
-### Performance registry parentView must be a navigation screen name
-`SuspenseWithWidgetPerformance` / `AccountListDataContainer` register widgets via `parentView`. This value must be a registered **navigation screen** (e.g. `"Home"`, `"Invest"`, `"AccountsList"`). Using a widget name (e.g. `"AccountsList"`) as `parentView` for a nested widget will produce: `"Attempted to instrument widget (X), but the parent (Y) does not exist"`.
-
-### Personal/business account classification
-- `getGroupNameFromAccountType(datum.accountType) === 'corporate'` correctly identifies all business accounts (all corporate `UnifiedAccountType`s map to `'corporate'` group name, including `BUSINESS_CHEQUING`)
-- `AccountGroupingCash` (cash tab) uses `isBusinessAccount` from `@wealthsimple/account-display-utils` — checks `account.type` field instead
-- `dataTransformGroupedList` is NOT exported from `account-grouping-mobile`; use `dataTransformFlatlist` which gives `AccountGroupDatum[]`
-
-### Heuristic: check the invest tab first for home screen patterns
-When solving data-fetching or rendering architecture questions on the home screen, read `libs/mobile/screens/home/src/views/invest/components/tabs/account-group/invest-account-grouping.component.tsx` first — it consistently has the canonical pattern already implemented (Suspense boundaries, `AccountListDataContainer`, personal/business classification).
-
 ## front-end-monorepo: Mobile Navigation — Modal vs Stack Screen
 
 ### Two-tier navigation: modal screens vs feature navigators
@@ -143,35 +105,5 @@ Root-level modal screens (slide-up drawer) must live in `modalScreens` in `apps/
 4. Change navigation prop type to `StackScreenProps<ReactNavigation.RootParamList, 'ScreenName'>`
 5. Add the lazy import entry to `modalScreens` in the micro-ui config file
 
-## front-end-monorepo: Cash Mobile Micro-UI Patterns
-
-### useLocale mock in cash tests
-The cash project has a global mock at `__mocks__/@wealthsimple/mobile-intl-ts/use-locale.hook.ts`
-that makes `getMessage(key)` return the key string itself (not the translated value). All cash
-tests must assert against locale **key strings** (e.g. `'business-chequing::onboarding::empty-states::pending-account-status-body'`), not translated text. Trying to pass real translated strings into the test provider will not work.
-
-### Apollo fragment cache in mobile tests
-`useAccountDetailsEmptyStatesFragment` reads from Apollo cache via `useFragment` — it makes no
-network request. Tests must seed the cache with `apolloClient.writeFragment()` using
-`InvestmentAccountDetailsEmptyStatesFragment` from `@wealthsimple/investing-network`. The
-fragment variables include `accountId`, `clientId` (from `useInvestUserId()`), and `identityId`
-(from `useIdentityId()`). The auth stub from `setupAuthInfoForTest()` sets
-`identityId: 'identity-123'` and `clientId: 'user-123'`.
-
 ### Dead code detection
-CI uses `pnpm unimported --quiet`. Run locally with the same command (with mise PATH set). Exit
-code 0 = clean.
-
-### EmptyStateContent MSW requirements
-When `AccountDetailsEmptyState` (mobile AOSDK) is rendered in tests, the nested `EmptyStateContent`
-component fires 5 GQL queries that must all be mocked:
-- `mockUseAccountCombinedNLV`
-- `mockUseActivityFeedItems`
-- `mockUseFundingAccountApproved`
-- `mockUseAccountCurrentFinancials`
-- `mockUseIdentityPositions`
-
-### respFacet in InvestmentAccountDetailsEmptyStatesFragment
-`mockAccount()` doesn't include `respFacet`, but the fragment expects it. Add `respFacet: null`
-explicitly when writing the fragment to the Apollo cache to avoid console.error warnings.
-
+CI uses `pnpm unimported --quiet`. Run locally with the same command (with mise PATH set). Exit code 0 = clean.
