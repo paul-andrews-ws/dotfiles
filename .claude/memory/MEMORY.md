@@ -4,20 +4,21 @@
 
 - Always wait for explicit user approval before committing and pushing. User QA tests changes on their local web build first.
 
-## Architecture & UI Feedback
+## Coding & Architecture Feedback
 
-- [Onboarding checklist patterns](feedback_onboarding_checklist_patterns.md) — V0/V1 wrapper ownership, config-driven extensibility, flag-gated items
-
-## Coding Style Feedback
-
+- [Feature-flagged widget patterns](feedback_onboarding_checklist_patterns.md) — V0/V1 wrappers, gate hooks behind flags, generic components via props, entrypoint nav pattern
+- [Code style from PR reviews](feedback_code_review_patterns.md) — inline values over constants files, FR locale literal chars (except ')
 - [React hooks style](feedback_react_hooks_style.md) — no superfluous try/catch, no premature useCallback/useMemo memoization
-- [Sweep tests on locale changes](feedback_locale_string_test_sweep.md) — grep old string values across ALL test files before committing copy updates
 - [Avoid skipToken](feedback_avoid_skiptoken.md) — split into data-gate parent + unconditional hook child per Vlad's guide
 - [Avoid duplicate typename checks](feedback_avoid_duplicate_typename_checks.md) — extract GQL union narrowing once, don't repeat __typename checks
 - [Throw guards over silent fallbacks](feedback_throw_guards_over_silent_fallbacks.md) — throw on unexpected GQL union results, don't silently fall back to defaults
-- [Tophat vault-service CSP](feedback_tophat_vault_service_csp.md) — tophat builds can't load vault-service frames; *.builds.wealthsimple.com not in frame-ancestors allowlist
 - [Agnostic components](feedback_agnostic_components.md) — shared UI inputs must not depend on form context; accept value/onChange props, caller wraps in Controller
-- [Schedule vs frequency naming](feedback_schedule_vs_frequency_naming.md) — "frequency" = interval (FrequencyOption, FrequencyInput); "schedule" = overall plan (ScheduleFrequency, getMaxEndDate)
+
+## Testing Feedback
+
+- [Mobile testing patterns](feedback_testing_patterns_mobile.md) — FeatureFlag.initialize over mocking, MSW over gql-sdk mocks, getMockProviderStack for DS components
+- [MMKV testing patterns](feedback_mmkv_testing_patterns.md) — built-in mock for renderHook, comprehensive module mock for component tests with deep dep trees
+- [Sweep tests on locale changes](feedback_locale_string_test_sweep.md) — grep old string values across ALL test files before committing copy updates
 
 ## front-end-monorepo: GQL SDK
 
@@ -37,6 +38,11 @@
 ## Tools & Integrations
 
 - [JIRA ticket creation via MCP Locker](reference_jira_ticket_creation.md) — mcplocker auth, BB project template with info panels, custom field IDs
+- [Parallel Sourcegraph subagents for cross-repo research](feedback_sourcegraph_parallel_research.md) — split question into facets, dispatch parallel agents with SG MCP, load deferred schemas via ToolSearch first
+
+## Wealthsimple Cash: Architecture
+
+- [Limits & allowances tri-service pattern](reference_limits_allowances_architecture.md) — fort-knox enforces, risk-service writes eligibility rows, ws-decision-platform Flink decides who qualifies
 
 ## front-end-monorepo: Git & Environment
 
@@ -89,21 +95,6 @@ If a `ConfigError: expected package.json path does not exist` surfaces for other
 ```bash
 pnpm nx run mobile-retail:start --reset-cache
 ```
-
-## front-end-monorepo: Mobile Navigation — Modal vs Stack Screen
-
-### Two-tier navigation: modal screens vs feature navigators
-Root-level modal screens (slide-up drawer) must live in `modalScreens` in `apps/mobile/retail/src/micro-uis/<package>.ts`, NOT as a `Stack.Screen` inside a feature navigator. Feature navigators use JS stacks (push transition, fullscreen).
-
-- `modalScreens` → processed by `NavigationBuilder.processModals` in `libs/mobile/packages/navigation/src/navigation.builder.tsx` → applies `{ animation: 'slide_from_bottom', presentation: 'modal', headerShown: false, freezeOnBlur: true }`
-- Feature `Stack.Screen` → push transition, fullscreen
-
-**When moving a screen to `modalScreens`:**
-1. Remove it from the feature navigator's `<Stack.Screen>` registration
-2. Remove its barrel export from `screens/index.ts` (becomes dead code — `pnpm unimported --quiet` will catch this)
-3. Add/keep its export in the package's `src/index.ts` (required for the cross-package lazy import)
-4. Change navigation prop type to `StackScreenProps<ReactNavigation.RootParamList, 'ScreenName'>`
-5. Add the lazy import entry to `modalScreens` in the micro-ui config file
 
 ### Dead code detection
 CI uses `pnpm unimported --quiet`. Run locally with the same command (with mise PATH set). Exit code 0 = clean.
