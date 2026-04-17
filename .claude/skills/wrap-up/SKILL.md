@@ -2,15 +2,16 @@
 name: wrap-up
 description: >
   Use when the user says "wrap up", "close session", "end session", "wrap
-  things up", "close out this task", or invokes /wrap-up. Runs a four-phase
+  things up", "close out this task", or invokes /wrap-up. Runs a five-phase
   end-of-session checklist covering file hygiene, memory consolidation,
-  self-improvement analysis, and content publishing. Execute all phases
-  automatically and present a consolidated report at the end.
+  developer-facing learnings capture, self-improvement analysis, and content
+  publishing. Execute all phases automatically and present a consolidated
+  report at the end.
 ---
 
 # Session Wrap-Up
 
-You are now in wrap-up mode. Run all four phases in order — each is
+You are now in wrap-up mode. Run all five phases in order — each is
 conversational and executed inline. **Do not create separate documents for
 this process.** Apply all changes autonomously without asking for permission
 first; surface what you did in the consolidated report at the end.
@@ -82,13 +83,73 @@ Apply updates now. If nothing noteworthy was learned, say so and move on.
 
 ---
 
-## Phase 3: Review & Apply
+## Phase 3: Capture Developer Learnings
+
+Goal: Capture technical learnings, gotchas, and workflow insights valuable to
+the user as a developer — distinct from Phase 2, which is Claude's own
+memory.
+
+Append to the **Developer Learnings** Notion page:
+https://www.notion.so/34541167bd968102bfd6e461f61de260
+
+### What qualifies
+
+- **Technical** — non-obvious mechanics of a library, tool, framework, or
+  system that took effort to figure out and will likely matter again
+- **Gotcha / footgun** — surprising behavior, silent failure modes, sharp
+  edges, easy-to-miss assumptions
+- **Claude workflow** — a prompting pattern, skill, or collaboration approach
+  that worked notably well (or badly) and is worth repeating/avoiding
+- **Cross-cutting insight** — pattern or principle that applies across
+  features, not tied to one ticket
+
+### What does NOT qualify
+
+- Ticket-specific feature details → belongs in the PR description or Notion
+  tech doc
+- Content already captured in Phase 2 (Claude's memory) — don't duplicate
+- One-off trivia with no reuse value
+
+### How to append
+
+Fetch the Developer Learnings page, then append each learning to the most
+relevant toggled section:
+
+- `front-end-monorepo` — specific to the FE monorepo
+- `fort-knox` — specific to fort-knox
+- `wealthsimple monolith` — specific to the Rails monolith
+- `Cross-cutting / general engineering` — patterns that apply across repos
+- `AI & Claude workflows` — prompting / skill / collaboration insights
+- `Gotchas & footguns` — sharp edges worth flagging regardless of repo
+
+Prepend new entries to the top of the section as a **toggle heading 3** so
+the section stays scannable. Format (tabs, not spaces, for indentation —
+Notion requires tabs to nest children under a toggle):
+
+```
+### YYYY-MM-DD — short descriptive title {toggle="true"}
+	One- or two-sentence summary phrased to be understandable without session
+	context.
+
+	Optional: links to relevant files, PRs, or docs. Multi-paragraph detail,
+	code snippets, tables, etc. all go indented inside the toggle.
+```
+
+Result: each section reads as a list of dated toggle-titles; a reader
+expands only the specific learning they want to read.
+
+If nothing from this session qualifies, say "No developer learnings to capture
+this session" and move on.
+
+---
+
+## Phase 4: Review & Apply
 
 Goal: Identify friction, gaps, and automation opportunities from this session,
 and apply improvements immediately.
 
 If the session was short, routine, or produced nothing notable, say
-"Nothing to improve this session" and skip to Phase 4.
+"Nothing to improve this session" and skip to Phase 5.
 
 Otherwise, scan the conversation for findings in these categories:
 
@@ -165,7 +226,7 @@ anything reviewed but left unchanged:
 
 ---
 
-## Phase 4: Publish It
+## Phase 5: Publish It
 
 Goal: Surface session material worth sharing publicly and draft content for
 review before posting.
