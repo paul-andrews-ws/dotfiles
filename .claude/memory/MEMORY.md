@@ -3,6 +3,7 @@
 ## Workflow Feedback
 
 - Always wait for explicit user approval before committing and pushing. User QA tests changes on their local web build first.
+- [Worktree preference for FEM](feedback_worktree_preference.md) — skip worktree for single-task FEM work; check out branch in main repo directly
 
 ## Coding & Architecture Feedback
 
@@ -17,13 +18,20 @@
 ## Testing Feedback
 
 - [Mobile testing patterns](feedback_testing_patterns_mobile.md) — FeatureFlag.initialize over mocking, MSW over gql-sdk mocks, getMockProviderStack for DS components
+- [MSW in RN test environment](feedback_msw_rn_test_environment.md) — MSW doesn't work in RN jest env; use jsdom + @testing-library/react + getMockApolloProvider
 - [MMKV testing patterns](feedback_mmkv_testing_patterns.md) — built-in mock for renderHook, comprehensive module mock for component tests with deep dep trees
+- [Mobile analytics SDK mocking](feedback_mobile_analytics_mocking.md) — jest.mock `@wealthsimple/mobile-analytics` is the accepted pattern; no MSW equivalent
 - [Sweep tests on locale changes](feedback_locale_string_test_sweep.md) — grep old string values across ALL test files before committing copy updates
+
+## front-end-monorepo: Nx & Tooling
+
+- [Nx project naming + single-file coverage gotcha](feedback_fem_nx_project_naming.md) — `-mobile` (packages/) vs `-mobile-screen` (screens/) suffixes; single-file test runs trip coverage threshold
 
 ## front-end-monorepo: GQL SDK
 
 - [New package gotchas](feedback_gql_sdk_new_package_gotchas.md) — CODEOWNERS prefix bug, unimported allowlist, union mock __typename, Nx daemon cache reset
 - [gql-generated scope creep](feedback_gql_generated_scope_creep.md) — regenerating gql-generated picks up unrelated schema changes; revert unless new base types are needed
+- [SDK test-utils MSW v2 regen](feedback_sdk_test_utils_msw_regen.md) — newly created SDK packages may have stale MSW v1 test-utils; regenerate with gql-generate
 
 ## Projects
 
