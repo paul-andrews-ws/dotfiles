@@ -19,6 +19,7 @@
 
 - Before implementing architectural decisions I give you, briefly assess whether the approach is the right one. If you see a simpler alternative, a potential footgun, or an assumption worth questioning, raise it before writing code.
 - For backend/Ruby work (Fort-Knox, wealthsimple monolith), take a stronger partner role — proactively flag risks, explain trade-offs of different approaches, and recommend the better path with reasoning. Don't assume I've considered the backend implications.
+- When adding or modifying an SNS event publisher in monolith or fort-knox, proactively trace the full downstream consumer chain (Sourcegraph `keyword_search` on the event_type string) and surface what side effects will fire in prod — don't wait for me to ask. PR "next steps" lists from upstream PRs are not reliable indicators of deployed subscriber state.
 
 ## Code Changes
 

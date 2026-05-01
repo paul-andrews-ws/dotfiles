@@ -52,6 +52,7 @@
 - [Wealthsimple monolith env for Bash tool](reference_wealthsimple_monolith_env.md) — ruby PATH + .env.development sourcing required for every bundle/rails/rubocop call
 - [Strong Migrations + change_table](feedback_strong_migrations_change_table.md) — use add_column not change_table; SM refuses to introspect change_table blocks
 - [GraphQL Hive schema staleness](feedback_hive_schema_staleness.md) — long-lived branches with no GQL changes can still fail Hive; merge master to bring in new fields, re-run alone won't fix
+- [Monolith → fort-knox event chain](reference_monolith_to_fort_knox_event_chain.md) — Pheme handler → EventBus listener → worker → use case; trace via Sourcegraph before claiming an event publisher is "no consumers"
 
 ## notification-service
 
