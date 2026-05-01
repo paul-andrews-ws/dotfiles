@@ -53,6 +53,10 @@
 - [Strong Migrations + change_table](feedback_strong_migrations_change_table.md) — use add_column not change_table; SM refuses to introspect change_table blocks
 - [GraphQL Hive schema staleness](feedback_hive_schema_staleness.md) — long-lived branches with no GQL changes can still fail Hive; merge master to bring in new fields, re-run alone won't fix
 
+## notification-service
+
+- [Repo overview](reference_notification_service.md) — 5-piece template pattern, Braze-vs-SendGrid routing, EMAIL_MIGRATION_EXCEPTION_TEMPLATES gate, staging maintenance task, Taxi quick ref
+
 ## Tools & Integrations
 
 - [JIRA ticket creation via MCP Locker](reference_jira_ticket_creation.md) — mcplocker auth, BB project template with info panels, custom field IDs

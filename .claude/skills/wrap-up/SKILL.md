@@ -13,8 +13,20 @@ description: >
 
 You are now in wrap-up mode. Run all five phases in order — each is
 conversational and executed inline. **Do not create separate documents for
-this process.** Apply all changes autonomously without asking for permission
-first; surface what you did in the consolidated report at the end.
+this process.**
+
+**Persistence checkpoint** — Phases 1 and 5 apply changes inline as designed
+(Phase 1 is non-mutating hygiene; Phase 5 has its own built-in approval
+prompt). For **Phases 2, 3, and 4**, produce a *plan* of what would change
+rather than writing immediately. After Phase 4's drafting completes, present
+a single consolidated preview covering all three phases and wait for explicit
+user approval before applying any of it. The user may request modifications;
+revise and re-present until approved. Then execute all approved changes in
+sequence.
+
+This means: do not write to memory files, do not call `notion-update-page`,
+and do not commit/push to dotfiles until the user has signed off on the
+consolidated preview.
 
 ---
 
@@ -79,7 +91,17 @@ discovered during one investigation, requirement resolution details) should be
 captured in team-facing docs like Notion or PR descriptions, not in memory
 files. Memory is for **cross-session, cross-feature patterns**.
 
-Apply updates now. If nothing noteworthy was learned, say so and move on.
+**Be rigorous on whether the memory is worth keeping at all.** If it covers
+a domain the user only occasionally touches (e.g. a repo their team doesn't
+own), apply a stronger filter: would it actually save time the next time, or
+is the same information available faster from the repo's README / a Notion
+guide / a quick grep? Keep tight files when in doubt — a 10-line pointer
+beats a 50-line dump. Memory files load on every session, so footprint
+matters.
+
+**Draft only — do not write yet.** Produce the planned file content + path
++ MEMORY.md index changes, and include them in the consolidated preview at
+the end of Phase 4. If nothing noteworthy was learned, say so and move on.
 
 ---
 
@@ -138,6 +160,10 @@ Notion requires tabs to nest children under a toggle):
 Result: each section reads as a list of dated toggle-titles; a reader
 expands only the specific learning they want to read.
 
+**Draft only — do not append yet.** Produce the planned entries (title,
+target section, full body) and include them in the consolidated preview at
+the end of Phase 4. The `notion-update-page` call happens after approval.
+
 If nothing from this session qualifies, say "No developer learnings to capture
 this session" and move on.
 
@@ -165,7 +191,7 @@ Otherwise, scan the conversation for findings in these categories:
 - **Automation** — Repetitive patterns that could become a skill, hook, or
   script to save future effort
 
-### Action types (apply these now, don't just list them)
+### Action types (draft as plan; apply after approval)
 
 - **`CLAUDE.md`** — Edit the relevant project or global CLAUDE.md to encode
   the rule or convention
@@ -177,15 +203,16 @@ Otherwise, scan the conversation for findings in these categories:
 - **`CLAUDE.local.md`** — Capture per-project context that's too personal to
   commit
 
-### Sync to dotfiles
+### Sync to dotfiles (after approval)
 
-After applying all Phase 3 changes, commit and push any modified dotfiles
-(CLAUDE.md, MEMORY.md, skills, rules, hooks, etc.) to the personal dotfiles
-repo so changes persist across machines:
+After the consolidated preview is approved, commit and push any modified
+dotfiles (CLAUDE.md, MEMORY.md, skills, rules, hooks, etc.) to the personal
+dotfiles repo so changes persist across machines:
 
 ```bash
 cd ~/path/to/dotfiles  # locate the dotfiles repo if not already known
-git add -A
+# Stage SPECIFIC files by name — never `git add -A` (sweeps unrelated drift)
+git add <specific-files>
 git commit -m "chore: wrap-up session updates [$(date +%Y-%m-%d)]"
 git push origin main
 ```
@@ -198,33 +225,67 @@ find ~ -maxdepth 4 -name ".git" -type d | xargs -I{} dirname {} | xargs -I{} sh 
 ```
 
 Only push files that belong in dotfiles (config, skills, rules, CLAUDE.md,
-MEMORY.md). Never commit secrets, tokens, or `CLAUDE.local.md`.
+MEMORY.md). Never commit secrets, tokens, or `CLAUDE.local.md`. **Use
+explicit file paths in `git add`, not `-A` or `.`** — the dotfiles repo
+typically has unrelated drift from other machines (e.g. `zsh/.zshrc` edits)
+that should not get bundled into a wrap-up commit.
 
-### Report format
+### Plan format
 
-Present a consolidated summary after applying — applied items first, then
-anything reviewed but left unchanged:
+Frame Phase 4's output as a *plan*, not actions taken. Apply after approval.
 
-**Findings (applied):**
+**Findings (planned):**
 
-1. ✅ Friction: Had to manually run lint after every file change
-   → [CLAUDE.md] Added pre-commit lint reminder to project instructions
+1. Friction: Had to manually run lint after every file change
+   → [CLAUDE.md] Will add pre-commit lint reminder to project instructions
 
-2. ✅ Skill gap: Incorrectly estimated token costs twice
-   → [MEMORY.md] Saved note on token estimation patterns for this project
+2. Skill gap: Incorrectly estimated token costs twice
+   → [MEMORY.md] Will save a note on token estimation patterns for this project
 
-3. ✅ Automation: Health check after deploy was always a manual step
-   → [Skill spec] Drafted `post-deploy-check` skill in `.claude/skills/`
+3. Automation: Health check after deploy was always a manual step
+   → [Skill spec] Will draft `post-deploy-check` skill in `.claude/skills/`
 
-4. ✅ Dotfiles synced → pushed to github.com/paul-andrews-ws/dotfiles
+4. Dotfiles → will commit `<file1>`, `<file2>` and push to
+   github.com/paul-andrews-ws/dotfiles after approval
 
 ---
-**No action taken:**
+**No action needed:**
 
 5. Knowledge: Discovered that X service batches requests
    Already documented in `CLAUDE.md` under the API section
 
 ---
+
+## Preview & Approve
+
+After Phase 4's plan is drafted, present a consolidated preview covering
+**all of Phase 2, 3, and 4** in a single message before any persistent
+mutation. Format:
+
+> **Phase 2 — Memory**
+> - Will create/modify: `<absolute path>`
+> - Generalizability test result: <kept | rejected | kept and pruned>
+> - 1-2 line summary of the new content
+> - MEMORY.md index changes
+>
+> **Phase 3 — Notion Developer Learnings**
+> - Entry 1: `<YYYY-MM-DD — title>` → `<section>`. 1-2 line summary.
+> - Entry 2: ...
+> - (or "No developer learnings to capture this session")
+>
+> **Phase 4 — Review & Apply**
+> - Findings + planned actions (use the format from §"Plan format" above)
+> - Dotfiles to be staged: `<file1>`, `<file2>`
+>
+> Approve to proceed, or request changes.
+
+After explicit approval, execute all approved changes in this order:
+1. Phase 2 — write memory file(s) and update MEMORY.md
+2. Phase 3 — call `notion-update-page` with each drafted entry
+3. Phase 4 — apply CLAUDE.md / rules / MEMORY.md / skill / hook edits, then
+   sync the relevant subset to dotfiles (specific `git add`, not `-A`)
+
+Then proceed to Phase 5.
 
 ## Phase 5: Publish It
 
