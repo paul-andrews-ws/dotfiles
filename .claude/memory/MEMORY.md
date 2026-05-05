@@ -36,6 +36,7 @@
 - [gql-generated scope creep](feedback_gql_generated_scope_creep.md) — regenerating gql-generated picks up unrelated schema changes; revert unless new base types are needed
 - [SDK test-utils MSW v2 regen](feedback_sdk_test_utils_msw_regen.md) — newly created SDK packages may have stale MSW v1 test-utils; regenerate with gql-generate
 - [gql-sdk-core fetchPolicy override on focus](feedback_gql_sdk_focus_policy_override.md) — internal useFocusEffect force-restores fetchPolicy to cache-first on re-focus; cache-and-network won't survive a blur/focus cycle
+- [Schema publish chain to FEM](feedback_schema_publish_chain.md) — fort-knox → invest-graphql-api bump PR → FEM gql-generated bump; channel & PR queue refs; gateway-mismatch INTERNAL_SERVER_ERROR symptom
 
 ## Projects
 
