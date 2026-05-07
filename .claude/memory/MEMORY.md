@@ -4,6 +4,7 @@
 
 - Always wait for explicit user approval before committing and pushing. User QA tests changes on their local web build first.
 - [Worktree preference for FEM](feedback_worktree_preference.md) — skip worktree for single-task FEM work; check out branch in main repo directly
+- [PR takeover intake process](feedback_pr_takeover_intake.md) — review-first before acting; do your own code review pass, check module boundaries and duplication, propose a plan before touching code
 
 ## Coding & Architecture Feedback
 
@@ -24,6 +25,10 @@
 - [Mobile analytics SDK mocking](feedback_mobile_analytics_mocking.md) — jest.mock `@wealthsimple/mobile-analytics` is the accepted pattern; no MSW equivalent
 - [Sweep tests on locale changes](feedback_locale_string_test_sweep.md) — grep old string values across ALL test files before committing copy updates
 - [useFocusEffect test mocking](feedback_use_focus_effect_test_mocking.md) — mocking `useNavigation` alone isn't enough; `useFocusEffect` internally calls `useNavigation` from `@react-navigation/core` and bypasses the mock
+
+## front-end-monorepo: Package Architecture
+
+- [FEMR package structure](reference_femr_package_structure.md) — libs/all/core (shared-front-end), libs/all/web (scope:web), libs/all/mobile (scope:mobile); extract when used by 2+ pages/screens; pages/screens never import each other
 
 ## front-end-monorepo: Tooling & Environment
 
